@@ -1,0 +1,63 @@
+<h1>Rails 4 Hangout</h1>
+<p>Type a message in text box below</p>
+
+
+
+<script type="text/javascript" charset="utf-8">
+var message_count = 0;
+$(document).ready(function() {
+  // Handler for .ready() called.
+  setInterval(function(){refresh()},3000);
+});
+function submit(){
+  $.ajax({
+        type: "POST",
+        url: "/messages/create.json",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
+        data: {"body": $("#message").val()},
+        success: function(data){
+          var all_messages = $("#all_messages");
+          var current_message = $("#message").val();
+          all_messages.val(all_messages.val()+""+current_message)
+          $("#message").val("");
+        }
+    });
+  console.log("submit called"+$("#message").val());
+}
+
+function load_all(){
+  $.ajax({
+        type: "GET",
+        url: "/messages/index.json",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
+        success: function(data){
+          console.log(data);
+          if (message_count != data.length){
+            $("#all_messages").val("");
+            for (i=0;i<data.length;i++){
+              $("#all_messages").val($("#all_messages").val()+data[i]["body"]+"\n");
+            }
+          }
+          message_count = data.length;
+        }
+    });
+
+}
+
+
+function refresh()
+{
+  //timer
+  load_all();
+}
+</script>
+
+
+<textarea id="all_messages" rows="20" cols="40"></textarea>
+<br />
+<textarea id="message" rows="1" cols="40"></textarea>
+<button type="submit" onclick="submit()">Submit</button>
