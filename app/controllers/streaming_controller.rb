@@ -6,7 +6,7 @@ class StreamingController < ApplicationController
   require 'reloader/sse'
   include ActionController::Live
 
-  def push
+  def live
     # setting header content type
     response.headers['Content-Type'] = 'text/event-stream'
     # making object of SSE class, in lib/reloder/sse.rb
@@ -30,14 +30,6 @@ class StreamingController < ApplicationController
     end
   end
 
-  # this is NOT a live streaming action
-  # it returns current time in json against an AJAX call
-  # this is to demonstrate AJAX hell
-  def index
-    respond_to do |format|
-      format.hml{} # just render html
-      format.json {render :json => {:time => Time.now}}
-    end
-  end
+ 
 
 end

@@ -1,0 +1,27 @@
+<h1>Ajax Hell</h1>
+
+<div id='time'>
+  
+</div>
+
+<script type="text/javascript" charset="utf-8">
+$(document).ready(function() {
+  // Handler for .ready() called.
+  setInterval(function(){refresh()},3000);
+});
+
+function refresh()
+{
+  //pull time using AJAX
+  $.ajax({
+        type: "GET",
+        url: "/streaming/index.json",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
+        success: function(data){
+          console.log(data);
+          $("#time").val($("#time").val()+data["body"]+"\n");
+        }
+    });
+}
